@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - Indoreal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* 🌿 === Variabel Tema Hijau === 🌿 */
+        :root {
+            --primary-green: #28a745; 
+            --light-green: #e6f7eb;  
+            --dark-green: #1e7e34; 
+
+            --bg-light: #ffffff; 
+            --bg-page: #F7F7F7; 
+            --text-dark: #333333; 
+            --text-muted: #888; 
+            --border-color: #EFEFEF; 
+            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05); 
+            --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.15); 
+        }
+
+        /* DEFINISI KEYFRAMES */
+        @keyframes slideDownFadeIn {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideUpFadeOut {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(30px); opacity: 0; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* === GLOBAL STYLING === */
+        body { 
+            font-family: 'Poppins', sans-serif; background-color: var(--bg-page); margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; color: var(--text-dark); 
+        }
+        .app-container { 
+            width: 100%; max-width: 450px; margin: 0 auto; background-color: var(--bg-light); 
+            box-shadow: none; flex-grow: 1; display: flex; 
+            flex-direction: column; 
+        }
+        .header { 
+            background: var(--bg-light); padding: 15px 20px; position: sticky; top: 0;
+            z-index: 10; box-shadow: var(--shadow-subtle); border-bottom: 1px solid var(--border-color);
+        }
+        .logo-text { 
+            font-size: 22px; font-weight: 700; text-align: left; margin: 0; color: var(--primary-green); 
+        }
+        .main-content { 
+            padding: 0 20px; flex-grow: 1; margin-top: 20px; padding-bottom: 100px; z-index: 2; 
+        }
+
+        /* --- SLIDER --- */
+        .image-slider-container {
+            position: relative; margin-bottom: 25px; overflow: hidden; border-radius: 11px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+        }
+        .image-slider { display: flex; width: 100%; height: 150px; transition: transform 0.5s ease-in-out; }
+        .image-slide-item { min-width: 100%; flex-shrink: 0; position: relative; height: 100%;}
+        .image-slide-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: block; }
+        .slider-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 5; }
+        .dot { height: 8px; width: 8px; background-color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 50%; display: inline-block; margin: 0 4px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; }
+        .dot.active { background-color: var(--primary-green); transform: scale(1.2); border-color: #fff; }
+
+        /* --- MENU AKSI --- */
+        .action-menu { display: flex; justify-content: space-around; margin-bottom: 30px; background: var(--light-green); border: 1px solid var(--primary-green); padding: 15px 10px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        .action-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-dark); font-size: 11px; font-weight: 500; width: 25%; text-align: center; transition: transform 0.2s; }
+        .action-icon { width: 45px; height: 45px; background-color: var(--bg-light); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--primary-green); margin-bottom: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+
+        /* --- Navigasi Bawah --- */
+        .bottom-nav { display:flex; justify-content:space-around; align-items:center; height:65px; padding: 5px 10px; box-sizing: border-box; background-color: var(--light-green); border: 1px solid var(--primary-green); border-radius: 10px; box-shadow: var(--shadow-float); position:fixed; bottom:20px; width:calc(100% - 40px); max-width:410px; left:50%; transform:translateX(-50%); z-index:100; } 
+        .nav-item { display:flex; flex-direction:column; align-items:center; text-decoration:none; color: var(--text-muted); font-size:10px; font-weight:500; padding:5px; transition:color 0.3s; }
+        .nav-item i { font-size:22px; margin-bottom:3px; }
+        .nav-item.active { color: var(--primary-green); font-weight:600; }
+        
+        /* --- INVESTMENT CARD (Detail Plan) --- */
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--dark-green); border-bottom: 2px solid var(--primary-green); display: inline-block; padding-bottom: 5px; }
+        .investment-card { 
+            background-color: #fff; border-radius: 15px; padding: 20px; 
+            box-shadow: var(--shadow-subtle); 
+            margin-bottom: 15px; 
+            border-left: 5px solid var(--primary-green); 
+            border: 1px solid var(--border-color); 
+        }
+        .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .plan-title { font-size: 16px; font-weight: 700; color: var(--dark-green); }
+        .plan-status { font-size: 11px; font-weight: 600; color: var(--primary-green); background-color: var(--light-green); padding: 4px 10px; border-radius: 8px; }
+        .plan-details { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            margin-top: 10px; 
+            padding-top: 10px; 
+            border-top: 1px dashed #eee; 
+        }
+        .detail-item { display: flex; justify-content: space-between; font-size: 13px; }
+        .detail-label { color: var(--text-muted); font-weight: 500; }
+        .detail-value { font-weight: 600; color: var(--text-dark); }
+        .detail-value.highlight { color: var(--primary-green); font-weight: 700; }
+        .btn-invest-now { 
+          font-family: 'Poppins', sans-serif;
+          width: 100%; padding: 10px; 
+          background: linear-gradient(to right, var(--primary-green), #38b455); 
+          color: white; border: none; border-radius: 10px; 
+          font-size: 14px; font-weight: 600; 
+          margin-top: 20px; cursor: pointer; position: relative; z-index: 1; 
+          box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); 
+        }
+        
+        /* 💥 MODAL DAN POPUP 💥 */
+        
+        /* WRAPPER (PopUp Welcome & Modal Konfirmasi) */
+        .popup-wrapper, .modal-overlay {
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.7); 
+          display: none; justify-content: center; align-items: center;
+          z-index: 9999;
+          padding: 0 20px; 
+          box-sizing: border-box;
+        }
+
+        .popup-wrapper.show, .modal-overlay.show {
+            display: flex; 
+            animation: fadeIn 0.5s forwards; 
+        }
+        .popup-wrapper.hide, .modal-overlay.hide {
+             animation: fadeOut 0.5s forwards; 
+        }
+
+        /* KOTAK KONTEN (PopUp Welcome & Modal Konfirmasi) */
+        .popup-box, .modal-content {
+          background: linear-gradient(135deg, #f0fdf4, #d1ffd7); 
+          width: 100%; 
+          max-width: 380px; 
+          color: var(--text-dark);
+          padding: 30px 25px; 
+          border-radius: 20px; 
+          text-align: center;
+          box-shadow: 0 15px 30px rgba(0,0,0,0.25); 
+          border: 2px solid var(--primary-green); 
+          transform: translateY(0); 
+          opacity: 0; 
+          position: relative; 
+          overflow: hidden; 
+        }
+
+        /* Dekorasi Tambahan */
+        .popup-box::before, .modal-content::before {
+            content: ''; position: absolute; top: -20px; right: -20px;
+            width: 80px; height: 80px; background: rgba(40, 167, 69, 0.1); 
+            border-radius: 50%; transform: rotate(45deg);
+        }
+        .popup-box::after, .modal-content::after {
+            content: ''; position: absolute; bottom: -30px; left: -30px;
+            width: 100px; height: 100px; background: rgba(40, 167, 69, 0.08);
+            border-radius: 50%; transform: rotate(-30deg);
+        }
+
+        /* Animasi Konten */
+        .popup-wrapper.show .popup-box, .modal-overlay.show .modal-content {
+            animation: slideDownFadeIn 0.7s ease-out forwards; 
+        }
+        .popup-wrapper.hide .popup-box, .modal-overlay.hide .modal-content {
+            animation: slideUpFadeOut 0.5s ease-in forwards;
+        }
+
+        /* Gaya Khusus Isi PopUp Welcome */
+        .popup-box h2 { margin-top: 0; font-size: 24px; font-weight: 800; color: var(--dark-green); margin-bottom: 15px; position: relative; z-index: 1; }
+        .popup-box h2 i { margin-right: 10px; color: var(--primary-green); }
+        .popup-box p { font-size: 15px; color: #555; margin-bottom: 25px; line-height: 1.6; position: relative; z-index: 1; }
+        .popup-btn { font-family: 'Poppins', sans-serif; margin-top: 15px; padding: 12px 25px; background: linear-gradient(to right, var(--primary-green), #4CAF50); color: #fff; font-size: 16px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; width: 80%; max-width: 250px; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4); position: relative; z-index: 1; }
+        
+        /* Gaya Khusus Isi Modal Konfirmasi */
+        .modal-content h3 { color: var(--dark-green); margin-top: 0; font-size: 20px; font-weight: 800; }
+        .modal-content p { margin-bottom: 25px; color: var(--text-dark); font-size: 15px; line-height: 1.5; }
+        .modal-actions { display: flex; justify-content: space-between; gap: 10px; }
+        .modal-btn {
+            padding: 12px; border-radius: 10px; font-size: 14px;
+            font-weight: 700; cursor: pointer; width: 50%; border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-batal { background: #e0e0e0; color: var(--text-dark); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); }
+        .btn-batal:hover { transform: translateY(-2px); background: #d0d0d0; }
+        .btn-yakin { 
+            background: linear-gradient(to right, var(--primary-green), #4CAF50); 
+            color: white;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+        .btn-yakin:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4); }
+        
+    </style>
+
+</head>
+<body>
+    
+<div id="welcomePopup" class="popup-wrapper">
+  <div class="popup-box">
+    <h2><i class="fas fa-hand-holding-usd"></i>Raih Kesuksesan Finansialmu!</h2>
+    <p>Selamat datang di Indoreal! Mari wujudkan tujuan keuangan Anda dengan berbagai pilihan investasi terbaik. Mulai perjalanan Anda hari ini dan saksikan aset Anda bertumbuh bersama kami.</p>
+    <button id="closePopup" class="popup-btn">Mulai Sekarang</button>
+  </div>
+</div>
+
+<div class="app-container" id="appContainer">
+    <header class="header">
+        <h1 class="logo-text">Indoreal</h1>
+    </header>
+    
+    <div class="main-content">
+        
+        <div style="display: none;">
+            <p class="balance-amount balance-deposito">Rp 0</p>
+            <p class="balance-amount balance-penarikan">Rp 0</p>
+        </div>
+        <div class="image-slider-container">
+            <div class="image-slider" id="imageSlider">
+                
+                <div class="image-slide-item">
+                    <img src="banner1.jpg" alt="Banner 1">
+                </div>
+                
+                <div class="image-slide-item">
+                    <img src="banner2.jpg" alt="Banner 2">
+                </div>
+                
+                <div class="image-slide-item">
+                    <img src="banner3.jpg" alt="Banner 3">
+                </div>
+
+            </div>
+            <div class="slider-dots" id="sliderDots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+        
+        <div class="action-menu">
+            <a href="deposit.html" class="action-item">
+                <div class="action-icon"><i class="fas fa-arrow-alt-circle-up"></i></div>
+               Isi Saldo
+            </a>
+            <a href="tarik.html" class="action-item">
+                <div class="action-icon"><i class="fas fa-wallet"></i></div>
+                Tarik Saldo
+            </a>
+            <a href="investasiku.html" class="action-item">
+                <div class="action-icon"><i class="fas fa-chart-line"></i></div>
+                Investasi
+            </a>
+            <a href="layanan.html" class="action-item">
+                <div class="action-icon"><i class="fas fa-paper-plane"></i></div>
+                Layanan
+            </a>
+        </div>
+        
+        <h2 class="section-title">Daftar Investasi</h2>
+
+        <section class="investment-list">
+            
+            <div class="investment-card"> 
+                <div class="plan-header"> 
+                    <span class="plan-title">Indoreal A1</span> 
+                    <span class="plan-status">Baru</span> 
+                </div> 
+                <div class="plan-details"> 
+                    <div class="detail-item"><span class="detail-label">Harga:</span><span class="detail-value">Rp 100.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Total:</span><span class="detail-value highlight">Rp 3.500.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Harian:</span><span class="detail-value">Rp 35.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Durasi:</span><span class="detail-value">100 Hari</span></div> 
+                </div> 
+                <button class="btn-invest-now" data-plan="Indoreal A1">Investasi Sekarang</button>  
+            </div> 
+            <div class="investment-card"> 
+                <div class="plan-header"> 
+                    <span class="plan-title">Indoreal B2</span> 
+                    <span class="plan-status">Baru</span> 
+                </div> 
+                <div class="plan-details"> 
+                    <div class="detail-item"><span class="detail-label">Harga:</span><span class="detail-value">Rp 200.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Total:</span><span class="detail-value highlight">Rp 7.000.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Harian:</span><span class="detail-value">Rp 70.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Durasi:</span><span class="detail-value">100 Hari</span></div> 
+                </div> 
+                <button class="btn-invest-now" data-plan="Indoreal B2">Investasi Sekarang</button>  
+            </div> 
+             <div class="investment-card"> 
+                <div class="plan-header"> 
+                    <span class="plan-title">Indoreal C3</span> 
+                    <span class="plan-status">Baru</span> 
+                </div> 
+                <div class="plan-details"> 
+                    <div class="detail-item"><span class="detail-label">Harga:</span><span class="detail-value">Rp 300.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Total:</span><span class="detail-value highlight">Rp 10.500.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Harian:</span><span class="detail-value">Rp 105.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Durasi:</span><span class="detail-value">100 Hari</span></div> 
+                </div> 
+                <button class="btn-invest-now" data-plan="Indoreal C3">Investasi Sekarang</button>  
+            </div> 
+            <div class="investment-card"> 
+                <div class="plan-header"> 
+                    <span class="plan-title">Indoreal J10</span> 
+                    <span class="plan-status">Baru</span> 
+                </div> 
+                <div class="plan-details"> 
+                    <div class="detail-item"><span class="detail-label">Harga:</span><span class="detail-value">Rp 1.000.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Total:</span><span class="detail-value highlight">Rp 35.000.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Harian:</span><span class="detail-value">Rp 350.000</span></div> 
+                    <div class="detail-item"><span class="detail-label">Durasi:</span><span class="detail-value">100 Hari</span></div> 
+                </div> 
+                <button class="btn-invest-now" data-plan="Indoreal J10">Investasi Sekarang</button>  
+            </div> 
+            
+        </section>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="beranda.html" class="nav-item active"><i class="fas fa-home"></i>Beranda</a>
+        <a href="investasiku.html" class="nav-item"><i class="fas fa-chart-line"></i>Invest</a>
+        <a href="tim.html" class="nav-item"><i class="fas fa-users"></i>Tim</a>
+        <a href="profil.html" class="nav-item"><i class="fas fa-user"></i>Profil</a>
+    </nav>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-content">
+        <h3><i class="fas fa-check-circle" style="margin-right: 8px; color: var(--primary-green);"></i>Konfirmasi Investasi</h3>
+        <p>Apakah Anda yakin ingin membeli <span id="planName">Produk Investasi ini</span>? Pastikan saldo Anda mencukupi.</p>
+        <div class="modal-actions">
+            <button class="modal-btn btn-batal" id="cancelBtn">Batal</button>
+            <button class="modal-btn btn-yakin" id="confirmBuyBtn">Yakin</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Fungsi helper untuk memformat angka menjadi Rupiah
+const formatRupiah = (number) => {
+    // Memastikan input adalah angka sebelum diformat
+    const num = Number(number);
+    if (isNaN(num)) return "Rp 0";
+    return "Rp " + num.toLocaleString("id-ID");
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // ===================================
+    // 💥 IMAGE SLIDER LOGIC 💥
+    // ===================================
+    const slider = document.getElementById('imageSlider');
+    let slides = document.querySelectorAll('.image-slide-item');
+    const dots = document.querySelectorAll('.dot');
+    const originalSlideCount = slides.length;
+    let currentSlide = 0; 
+    let slideInterval;
+    const intervalTime = 4000; 
+    const transitionDuration = 500; 
+
+    const firstSlide = slides[0];
+    const clone = firstSlide.cloneNode(true); 
+    clone.classList.add('clone');
+    slider.appendChild(clone);
+    
+    slides = document.querySelectorAll('.image-slide-item');
+
+    function updateSlider(isSmooth = true) {
+        if (isSmooth) {
+            slider.style.transition = `transform ${transitionDuration / 1000}s ease-in-out`;
+        } else {
+            slider.style.transition = 'none';
+        }
+
+        const shift = -currentSlide * 100;
+        slider.style.transform = `translateX(${shift}%)`;
+
+        dots.forEach((dot, index) => {
+            dot.classList.remove('active');
+        });
+        
+        const activeDotIndex = currentSlide % originalSlideCount;
+        if (dots[activeDotIndex]) {
+            dots[activeDotIndex].classList.add('active');
+        }
+    }
+
+    function nextSlide() {
+        currentSlide++;
+        updateSlider();
+
+        if (currentSlide === originalSlideCount) {
+            setTimeout(() => {
+                currentSlide = 0;
+                updateSlider(false); 
+            }, transitionDuration); 
+            setTimeout(() => {
+                slider.style.transition = `transform ${transitionDuration / 1000}s ease-in-out`;
+            }, transitionDuration + 50); 
+        }
+    }
+
+    function startSlider() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, intervalTime);
+    }
+
+    function goToSlide(index) {
+        currentSlide = index;
+        updateSlider();
+        startSlider(); 
+    }
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            goToSlide(index);
+        });
+    });
+
+    updateSlider(); 
+    startSlider();
+    
+    // ===================================
+    // 🌿 LOGIC APLIKASI UTAMA (DATA & TRANSAKSI) - SKRIP BEKERJA 🌿
+    // ===================================
+    const investButtons = document.querySelectorAll(".btn-invest-now");
+    const modal = document.getElementById("confirmModal");
+    const planNameEl = document.getElementById("planName");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const confirmBtn = document.getElementById("confirmBuyBtn");
+    const hideAnimationDuration = 700;
+    
+    // Ambil elemen saldo (walaupun tersembunyi, ini perlu agar skrip tidak error)
+    const balanceDepoEl = document.querySelector(".balance-deposito");
+    const balanceTarikEl = document.querySelector(".balance-penarikan");
+
+    let selectedPlan = null;
+    let selectedPrice = 0;
+    let selectedDaily = 0;
+    let selectedDuration = 0;
+    let selectedTotal = 0;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let activeUser = JSON.parse(localStorage.getItem("activeUser"));
+
+    if (!activeUser) {
+        // Inisialisasi default jika tidak ada user aktif
+        activeUser = { phone: "08123456789", balance: 500000, earning: 0, currentInvestments: [] };
+    }
+    
+    activeUser.balance = Number(activeUser.balance || 0);
+    activeUser.earning = Number(activeUser.earning || 0);
+    if (!activeUser.currentInvestments) activeUser.currentInvestments = [];
+    
+    // --- FUNGSI UNTUK UPDATE TAMPILAN SALDO (MASIH DIPERLUKAN WALAU ELEMEN TERSEMBUNYI) ---
+    const updateBalanceDisplay = () => {
+        if (balanceDepoEl && balanceTarikEl) {
+            balanceDepoEl.textContent = formatRupiah(activeUser.balance);
+            balanceTarikEl.textContent = formatRupiah(activeUser.earning);
+        }
+        // console.log("Saldo aktif saat ini: " + activeUser.balance);
+    };
+    
+    // --- FUNGSI UNTUK MODAL KONFIRMASI (SHOW/HIDE DENGAN ANIMASI) ---
+    const showModal = () => {
+        modal.classList.remove('hide');
+        modal.classList.add('show');
+    };
+
+    const hideModal = () => {
+        modal.classList.remove('show');
+        modal.classList.add('hide');
+
+        setTimeout(() => {
+            modal.classList.remove('hide'); 
+        }, hideAnimationDuration); 
+    };
+    // ----------------------------------------------------------------------
+
+
+    // Klik tombol beli investasi
+    investButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            selectedPlan = btn.dataset.plan;
+            planNameEl.textContent = selectedPlan;
+
+            const card = btn.closest(".investment-card");
+
+            const detailValues = card.querySelectorAll(".detail-item .detail-value");
+            
+            // Mengambil semua data plan dari card
+            selectedPrice = Number(detailValues[0].textContent.replace(/[^0-9]/g, ""));
+            selectedTotal = Number(detailValues[1].textContent.replace(/[^0-9]/g, ""));
+            selectedDaily = Number(detailValues[2].textContent.replace(/[^0-9]/g, ""));
+            
+            const durationText = detailValues[3].textContent.replace(/[^0-9\s]/g, "").trim(); 
+            selectedDuration = Number(durationText.split(' ')[0]);
+
+            showModal();
+        });
+    });
+
+    // Cancel modal
+    cancelBtn.addEventListener("click", hideModal);
+
+    // Konfirmasi beli
+    confirmBtn.addEventListener("click", () => {
+        hideModal();
+
+        if (activeUser.balance >= selectedPrice) {
+            activeUser.balance -= selectedPrice; // Pengurangan saldo
+
+            // Simpan investasi baru (LOGIKA PENTING)
+            activeUser.currentInvestments.push({
+                name: selectedPlan,
+                price: selectedPrice,
+                daily: selectedDaily,       
+                duration: selectedDuration, 
+                total: selectedTotal,       
+                status: "Aktif",
+                date: new Date().toLocaleDateString("id-ID"),
+                startDate: new Date().toISOString(),     
+                lastProfitDate: new Date().toISOString() 
+            });
+
+            // Update array users dan simpan ke localStorage
+            const index = users.findIndex(u => u.phone === activeUser.phone);
+            if (index !== -1) {
+                users[index] = activeUser;
+            } else {
+                users.push(activeUser);
+            }
+
+            localStorage.setItem("activeUser", JSON.stringify(activeUser));
+            localStorage.setItem("users", JSON.stringify(users));
+
+            updateBalanceDisplay(); // Update saldo di DOM (walaupun tersembunyi)
+
+            // Notifikasi & Redirect (Redirect ke Investasiku)
+            alert(`Pembelian ${selectedPlan} berhasil! Saldo Anda saat ini: ${formatRupiah(activeUser.balance)}`);
+            window.location.href = "investasiku.html";
+        } else {
+            alert("Saldo tidak cukup! Saldo Anda: " + formatRupiah(activeUser.balance));
+        }
+    });
+    
+    // ===================================
+    // 💥 POPUP WELCOME LOGIC 💥
+    // ===================================
+    const popup = document.getElementById("welcomePopup");
+
+    const showPopup = () => {
+        popup.classList.remove('hide');
+        popup.classList.add('show');
+    };
+
+    const hidePopup = () => {
+        popup.classList.remove('show');
+        popup.classList.add('hide');
+
+        setTimeout(() => {
+            popup.classList.remove('hide');
+        }, 700);
+    };
+
+    showPopup();
+
+    const closePopupBtn = document.getElementById("closePopup");
+    closePopupBtn.addEventListener("click", hidePopup);
+
+    // Tampilkan saldo saat load (menginisialisasi data)
+    updateBalanceDisplay();
+});
+</script>
+</body>
+</html>

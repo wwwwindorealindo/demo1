@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isi Ulang Dana (Deposit) - Indoreal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* 🌿 === Variabel Tema HIJAU PUTIH (Minimalis Konsisten) === 🌿 */
+        :root {
+            --primary-green: #28a745; 
+            --dark-green: #1e7e34; 
+            --light-green: #e6f7eb; 
+            --bg-light: #ffffff; 
+            --bg-page: #F7F7F7; 
+            --text-dark: #333333; 
+            --text-muted: #888; 
+            --border-color: #EFEFEF; 
+            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-deep: 0 6px 15px rgba(40, 167, 69, 0.25); /* Bayangan Saldo Dipertegas */
+            --transition-speed: 0.1s; /* Transisi Dipercepat */
+        }
+        
+        /* Definisi Keyframes untuk animasi kilauan otomatis */
+        @keyframes shine {
+            0% { left: -130%; }
+            100% { left: 130%; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Styling Dasar */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-page); 
+            margin: 0; padding: 0; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            color: var(--text-dark); 
+        }
+        .app-container { 
+            width: 100%; max-width: 450px; 
+            margin: 0 auto; 
+            background-color: var(--bg-light); 
+            box-shadow: none; 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        .main-content { 
+            padding: 20px 20px 40px 20px; 
+            flex-grow: 1; 
+            animation: fadeIn 0.5s ease-out; 
+        }
+
+        /* === HEADER === */
+        .recharge-header { 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            padding: 18px 20px; 
+            display: flex; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10;
+            box-shadow: var(--shadow-subtle);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .recharge-header h2 { 
+            font-size: 20px; 
+            font-weight: 700; 
+            margin: 0 auto; 
+            text-align: center; 
+            color: var(--dark-green); 
+        }
+        .back-button { 
+            background: none; 
+            border: none; 
+            color: var(--text-dark); 
+            font-size: 18px; 
+            cursor: pointer; 
+            position: absolute; 
+            left: 20px; 
+            padding: 0;
+            transition: color var(--transition-speed);
+        }
+
+        /* === KARTU SALDO SAAT INI === */
+        .balance-summary-card {
+            background-color: var(--light-green); 
+            color: var(--text-dark);
+            padding: 25px; 
+            border-radius: 10px; 
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-deep); /* Bayangan dipertegas */
+            border: 1px solid var(--primary-green); 
+            position: relative; 
+            overflow: hidden; 
+            z-index: 1;
+        }
+        .balance-summary-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -130%; width: 30%; height: 100%;
+            background: rgba(255, 255, 255, 0.2); 
+            transform: skewX(-20deg); 
+            z-index: 2; 
+            animation: shine 4s linear infinite 0.5s; 
+        }
+        .balance-summary-card h3 { 
+            font-size: 14px; margin: 0 0 5px 0; font-weight: 500; color: var(--text-muted);
+        }
+        .balance-summary-card p { 
+            font-size: 24px; 
+            margin: 0; 
+            font-weight: 700; 
+            color: var(--dark-green); 
+        }
+        /* Penambahan Garis Pemisah */
+        .separator {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 30px 0; 
+        }
+
+        /* === KOTAK NOMINAL CEPAT === */
+        .quick-nominals-container {
+            padding: 15px;
+            background-color: var(--light-green); 
+            border: 1px solid var(--primary-green); 
+            border-radius: 10px;
+            box-shadow: var(--shadow-subtle);
+        }
+        .quick-nominals-container h3 {
+            font-size: 15px;
+            font-weight: 700; 
+            color: var(--dark-green);
+            margin: 0 0 10px 0;
+            border-bottom: 1px dashed var(--primary-green); 
+            padding-bottom: 8px;
+        }
+        .quick-nominals {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .nominal-box {
+            padding: 8px 5px; 
+            background-color: var(--bg-light); 
+            border: 1px solid var(--primary-green); 
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px; 
+            font-weight: 500; 
+            color: var(--text-dark); 
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+        .nominal-box:hover {
+            background-color: var(--light-green);
+            border-color: var(--dark-green);
+        }
+        .nominal-box.active {
+            background-color: var(--primary-green); 
+            border-color: var(--primary-green);
+            color: white;
+            box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+            font-weight: 600; 
+        }
+
+        /* === FORMULIR DAN INPUT === */
+        .form-group { margin-bottom: 25px; }
+        .form-group label { 
+            display: block; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; 
+        }
+        .input-amount-container { 
+            display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-light); padding: 5px 15px; box-shadow: var(--shadow-subtle); transition: border-color var(--transition-speed), box-shadow var(--transition-speed); 
+        }
+        .input-amount-container:focus-within { 
+            border-color: var(--primary-green); box-shadow: 0 0 5px rgba(40, 167, 69, 0.2);
+        }
+        .input-amount-container span { 
+            font-size: 16px; 
+            font-weight: 500; 
+            color: var(--text-dark); 
+            margin-right: 10px; 
+        }
+        .input-amount { 
+            flex-grow: 1; border: none; padding: 10px 0; font-size: 16px; 
+            font-weight: 500; 
+            color: var(--text-dark); outline: none; background: transparent; -moz-appearance: textfield; 
+        }
+        .input-amount::-webkit-inner-spin-button, .input-amount::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .select-method { 
+            width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-light); font-size: 16px; color: var(--text-dark); appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='%231e7e34' d='M9.293 12.95l.707.707 5-5-1.414-1.414L10 10.836 6.414 7.25 5 8.664l4.293 4.286z'/%3e%3c/svg%3e"); 
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 12px; cursor: pointer; box-shadow: var(--shadow-subtle);
+        }
+
+        /* === TOMBOL SUBMIT === */
+        .btn-recharge-submit { 
+            width: 100%; padding: 14px; background: var(--primary-green); color: white; border: none; border-radius: 8px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            font-family: 'Poppins', sans-serif; 
+            cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); 
+            margin-top: 25px; 
+            transition: background-color var(--transition-speed), transform var(--transition-speed); /* Transisi lebih cepat */
+        }
+        .btn-recharge-submit:hover { 
+            background-color: var(--dark-green); 
+            transform: translateY(-1px); 
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.4); /* Bayangan hover lebih dalam */
+        }
+        .btn-recharge-submit:active { transform: translateY(0); }
+        
+        /* NOTE */
+        .recharge-note { 
+            font-size: 13px; color: var(--dark-green); margin-top: 30px; padding: 15px; background-color: var(--light-green); border: 1px dashed var(--primary-green); border-radius: 8px; text-align: left; font-weight: 500;
+        }
+        .recharge-note i {
+            color: var(--dark-green); margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        
+        <header class="recharge-header">
+            <button class="back-button" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Deposito</h2>
+        </header>
+
+        <div class="main-content">
+
+            <div class="balance-summary-card">
+                <h3>Saldo Deposito Saat Ini</h3>
+                <p>Rp 0</p>
+            </div>
+            
+            <div class="separator"></div> <form id="rechargeForm">
+                
+                <div class="form-group">
+                    <label for="amount">Masukkan Jumlah Deposit (Min. Rp100.000)</label>
+                    <div class="input-amount-container">
+                        <span>Rp</span>
+                        <input type="number" id="amount" class="input-amount" placeholder="Contoh: 100000" required min="100000">
+                    </div>
+                </div>
+
+                <div class="quick-nominals-container" style="margin-bottom: 25px;"> 
+                    <h3><i class="fas fa-coins" style="margin-right: 5px;"></i>Pilih Nominal Cepat (IDR)</h3>
+                    <div class="quick-nominals" id="quickNominals">
+                        <div class="nominal-box" data-amount="100000">100.000</div>
+                        <div class="nominal-box" data-amount="250000">250.000</div>
+                        <div class="nominal-box" data-amount="500000">500.000</div>
+                        <div class="nominal-box" data-amount="1000000">1.000.000</div>
+                        <div class="nominal-box" data-amount="2000000">2.000.000</div>
+                        <div class="nominal-box" data-amount="5000000">5.000.000</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="method">Pilih Metode Pembayaran</label>
+                    <select id="method" class="select-method" required>
+                        <option value="">-- Pilih Metode --</option>
+                        <option value="qris">Qris</option>
+                        <option value="virtual_account">Virtual Account</option>
+                        <option value="e_wallet">E-wallet</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-recharge-submit">
+                    Lanjutkan Pembayaran
+                </button>
+            </form>
+
+            <div class="recharge-note">
+                <i class="fas fa-info-circle"></i> Pastikan jumlah yang di-input sesuai untuk menghindari kegagalan sistem.
+            </div>
+            
+        </div>
+    </div>
+    
+<script>
+// ====================================================================================
+// START: FUNGSI TAMBAHAN UNTUK NOMINAL CEPAT (Hanya untuk UI, TIDAK MENGGANGGU LOGIKA DEPOSIT)
+// ====================================================================================
+
+function handleQuickNominalClick(event) {
+    const amountInput = document.getElementById('amount');
+    const nominalBoxes = document.querySelectorAll('.nominal-box');
+    
+    // Hapus kelas 'active' dari semua kotak
+    nominalBoxes.forEach(box => box.classList.remove('active'));
+
+    // Cek jika yang diklik adalah kotak nominal
+    if (event.target.classList.contains('nominal-box')) {
+        const amount = event.target.getAttribute('data-amount');
+        amountInput.value = amount;
+        event.target.classList.add('active');
+    }
+}
+
+// Logika untuk menghapus 'active' dari kotak jika pengguna mengetik manual
+function handleInputManual() {
+    const nominalBoxes = document.querySelectorAll('.nominal-box');
+    nominalBoxes.forEach(box => box.classList.remove('active'));
+}
+
+// ====================================================================================
+// START: SCRIPT ANDA (DIJAMIN TIDAK BERUBAH DAN DITARUH DI BAWAH INI)
+// ====================================================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    // --- Penambahan Event Listeners untuk Nominal Cepat (UI) ---
+    document.getElementById('quickNominals').addEventListener('click', handleQuickNominalClick);
+    document.getElementById('amount').addEventListener('input', handleInputManual);
+    // -----------------------------------------------------------
+    
+    // Ambil user aktif
+    let activeUser = JSON.parse(localStorage.getItem("activeUser"));
+    const isLogin = localStorage.getItem("isLogin");
+
+    if (!activeUser || isLogin !== "true") {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Pastikan balance ada
+    activeUser.balance = activeUser.balance ?? 0;
+    const balanceCard = document.querySelector(".balance-summary-card p");
+    if (balanceCard) {
+        balanceCard.textContent = "Rp " + Number(activeUser.balance).toLocaleString("id-ID");
+    }
+
+    const rechargeForm = document.getElementById('rechargeForm');
+    rechargeForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const amountInput = document.getElementById('amount');
+        const methodSelect = document.getElementById('method');
+        const amount = Number(amountInput.value);
+        const method = methodSelect.value;
+
+        if (amount < 100000) {
+            alert('Minimal isi ulang adalah Rp 100.000.');
+            amountInput.focus();
+            return;
+        }
+        if (method === "") {
+            alert('Mohon pilih metode pembayaran.');
+            methodSelect.focus();
+            return;
+        }
+
+let users = JSON.parse(localStorage.getItem('users')) || [];
+let activeUser = JSON.parse(localStorage.getItem('activeUser'));
+
+// Generate transaksi baru
+const uniqueCode = Math.floor(100 + Math.random() * 900);
+const finalAmount = amount + uniqueCode;
+
+const newDeposit = {
+    amount: finalAmount,
+    date: new Date().toLocaleString('id-ID', { hour12:false }),
+    status: "Menunggu",
+    uniqueCode: uniqueCode
+};
+
+// Update di activeUser
+activeUser.deposits = activeUser.deposits || [];
+activeUser.deposits.unshift(newDeposit);
+
+// Update di users
+users = users.map(user => {
+    if(user.username === activeUser.username){
+        return activeUser;
+    }
+    return user;
+});
+
+// Simpan kembali
+localStorage.setItem('activeUser', JSON.stringify(activeUser));
+localStorage.setItem('users', JSON.stringify(users));
+        // Simpan untuk payment.html
+        localStorage.setItem('currentDepositAmount', amount);
+        localStorage.setItem('currentDepositMethod', method);
+        localStorage.setItem('currentDepositUniqueCode', uniqueCode);
+        localStorage.setItem('currentDepositFinalAmount', finalAmount);
+
+        // Redirect ke payment.html
+        window.location.href = "payment.html";
+    });
+});
+// ====================================================================================
+// END: SCRIPT ANDA
+// ====================================================================================
+</script>
+</body>
+</html>

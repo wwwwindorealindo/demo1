@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investasi Saya - Indoreal</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+/* 🌿 === Variabel Tema Hijau (Konsisten dengan Halaman Profil) === 🌿 */
+:root {
+    --primary-green: #28a745; /* Hijau Utama */
+    --light-green: #e6f7eb; /* Background Hijau Sangat Terang */
+    --dark-green: #1e7e34;  /* Hijau Gelap */
+
+    --bg-light: #ffffff; /* Latar Belakang Kartu Putih */
+    --bg-page: #F7F7F7; /* Background Halaman/Body */
+    --text-dark: #333333; /* Teks Utama */
+    --text-muted: #888; /* Teks Pendukung */
+    --border-color: #EFEFEF; 
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05); 
+    --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.15); 
+    --status-active: #007bff; /* Biru untuk status Aktif */
+    --status-completed: #28a745; /* Hijau untuk status Selesai */
+}
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background-color: var(--bg-page); 
+    margin:0; 
+    padding:0; 
+    min-height:100vh; 
+    display:flex; 
+    flex-direction:column; 
+    color: var(--text-dark);
+}
+.app-container { 
+    width:100%; 
+    max-width:450px; 
+    margin:0 auto; 
+    background-color:var(--bg-light); 
+    box-shadow:none; 
+    flex-grow:1; 
+    display:flex; 
+    flex-direction:column; 
+    position:relative;
+}
+/* Padding bawah disesuaikan untuk Floating Box Navbar 65px + 20px margin */
+.main-content { 
+    padding:0 20px 110px 20px; 
+    flex-grow:1;
+}
+
+/* 💚 === HEADER & TAB NAVIGASI === 💚 */
+.header-wrapper {
+    background: var(--bg-light); 
+    border-bottom: 1px solid var(--border-color); 
+}
+.top-section { 
+    color: var(--text-dark); 
+    padding:20px 20px 10px 20px; 
+    text-align: center;
+}
+.top-section h2 { 
+    font-size:20px; 
+    font-weight:600; 
+    margin:0; 
+}
+.top-section p { 
+    font-size:13px; 
+    color: var(--text-muted);
+    margin: 5px 0 0 0; 
+}
+
+/* === TAB NAVIGASI === */
+.tab-navigation {
+    display: flex;
+    justify-content: space-around; 
+    padding: 0 20px;
+    margin-bottom: 10px;
+}
+.tab-button {
+    flex: 1; 
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+.tab-button.active-tab {
+    font-weight: 600;
+    color: var(--primary-green);
+    border-bottom: 2px solid var(--primary-green);
+}
+
+/* === TAB CONTENT === */
+.tab-content-container {
+    padding-top: 10px; 
+}
+.tab-pane {
+    display: none; 
+}
+.tab-pane.active-pane {
+    display: block;
+}
+
+
+/* 📉 === KARTU INVESTASI (Gaya Ramping) === 📉 */
+.investment-card { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    background:var(--bg-light); 
+    border-radius:10px; 
+    padding:15px; 
+    margin-top:15px; 
+    margin-bottom:15px; 
+    
+    box-shadow:var(--shadow-subtle); 
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    cursor: pointer; 
+}
+.investment-card.active-render {
+    border: 2px solid var(--primary-green); 
+    background-color: var(--light-green); 
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.1); 
+}
+.investment-card.completed-render {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-light);
+    box-shadow: var(--shadow-subtle);
+}
+
+.plan-info-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.plan-title { 
+    font-weight:700; 
+    font-size:15px; 
+    color: var(--dark-green);
+    margin-bottom: 5px;
+}
+.plan-price-status {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-dark);
+}
+.plan-price-status .price {
+    font-weight: 600;
+    margin-right: 10px;
+}
+.plan-status { 
+    font-size:11px; 
+    padding: 3px 6px;
+    border-radius: 5px;
+    font-weight:600;
+}
+.view-details-icon {
+    font-size: 18px;
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+.investment-card:hover .view-details-icon {
+    color: var(--primary-green);
+}
+
+
+/* 💔 === KARTU INVESTASI KOSONG (EMPTY STATE) - GAYA BARU === 💔 */
+.empty-investment-card { 
+    text-align:center; 
+    padding:30px 20px; 
+    background-color:var(--bg-light); 
+    border-radius:10px; 
+    margin-top:20px; 
+    box-shadow:var(--shadow-subtle); 
+    border:1px solid var(--border-color);
+}
+.empty-icon-sad {
+    background-color: var(--light-green); 
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px auto;
+}
+.empty-icon-sad i { 
+    font-size:30px; 
+    color:var(--primary-green); 
+}
+.empty-investment-card h4 { 
+    font-size:16px; 
+    font-weight:700; 
+    color: var(--text-dark); 
+    margin:0 0 5px 0;
+}
+.empty-investment-card p { 
+    font-size:13px; 
+    color: var(--text-muted); 
+    margin:0 0 20px 0;
+}
+.btn-buy-product { 
+    padding:10px 25px; 
+    background: var(--dark-green); 
+    color:white; 
+    border:none; 
+    border-radius:8px; 
+    font-size:14px; 
+    font-weight:600; 
+    cursor:pointer; 
+    box-shadow:0 4px 10px rgba(40, 167, 69, 0.3); 
+    text-decoration:none; 
+    display:inline-flex; 
+    align-items:center; 
+    transition: background-color 0.2s;
+}
+.btn-buy-product:hover { 
+    background-color: var(--primary-green);
+}
+
+/* ⬇️ === NAVIGASI BAWAH (KONSISTEN GAYA PROFIL: FLOATING BOX) === ⬇️ */
+.bottom-nav { 
+    display:flex; 
+    justify-content:space-around; 
+    align-items:center; 
+    height:65px; 
+    padding: 5px 10px;
+    box-sizing: border-box; 
+    
+    background-color: var(--light-green); 
+    border: 1px solid var(--primary-green); 
+    border-radius: 10px; 
+    box-shadow: var(--shadow-float); 
+
+    position:fixed; 
+    bottom:20px; 
+    width:calc(100% - 40px); 
+    max-width:410px; 
+    left:50%; 
+    transform:translateX(-50%); 
+    z-index:100; 
+}
+.nav-item { 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    text-decoration:none; 
+    color: #555; 
+    font-size:10px; 
+    font-weight:500; 
+    padding:5px; 
+    transition:color 0.3s; 
+}
+.nav-item i { 
+    font-size:22px; 
+    font-weight:700; 
+    margin-bottom:3px; 
+}
+.nav-item.active-product { 
+    color: var(--primary-green); 
+    font-weight:600; 
+}
+
+/* Utility Class untuk status di JS */
+.status-active-style {
+    color: var(--status-active);
+    background-color: rgba(0, 123, 255, 0.1);
+}
+.status-completed-style {
+    color: var(--status-completed);
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+/* ================================= */
+/* 🔳 === OVERLAY DETAIL (GAYA SESUAI CONTOH) === 🔳 */
+/* ================================= */
+#detailOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5); 
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+.overlay-content {
+    background: var(--bg-light);
+    width: 90%;
+    max-width: 400px;
+    padding: 0; 
+    border-radius: 10px; 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); 
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; 
+    overflow: hidden; 
+}
+#detailOverlay.show .overlay-content {
+    transform: scale(1);
+    opacity: 1;
+}
+.overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 15px 20px;
+}
+.overlay-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+.overlay-header .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+}
+.product-highlight-box {
+    background-color: var(--light-green);
+    padding: 15px 20px;
+    margin: 0 20px 20px 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+.product-highlight-box h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-green);
+}
+.product-highlight-box p {
+    margin: 3px 0 0 0;
+    font-size: 12px;
+    color: var(--text-dark);
+}
+#overlayDetailsContainer {
+    padding: 0 20px 20px 20px;
+}
+.detail-item-overlay {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0; 
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+}
+.detail-item-overlay:last-child {
+    border-bottom: none;
+}
+.detail-item-overlay .label {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+.detail-item-overlay .value {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.detail-item-overlay .value.highlight {
+    color: var(--dark-green); 
+    font-weight: 700;
+}
+.detail-item-overlay .value.timer {
+    color: #ff5722; 
+    font-weight: 700;
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header-wrapper">
+        <header class="top-section">
+            <h2>Investasi Saya</h2>
+            <p>Kelola semua produk investasi Anda</p>
+        </header>
+
+        <div class="tab-navigation">
+            <div class="tab-button active-tab" data-tab="active">Produk Aktif</div>
+            <div class="tab-button" data-tab="completed">Produk Selesai</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="tab-content-container">
+            <div id="tab-active" class="tab-pane active-pane">
+                <div id="activeInvestmentList">
+                    </div>
+            </div>
+
+            <div id="tab-completed" class="tab-pane">
+                <div id="completedInvestmentList">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="beranda.html" class="nav-item">
+            <i class="fas fa-home"></i> Beranda
+        </a>
+        <a href="investasiku.html" class="nav-item active-product">
+            <i class="fas fa-chart-line"></i> Invest
+        </a>
+        <a href="tim.html" class="nav-item">
+            <i class="fas fa-users"></i> Tim
+        </a>
+        <a href="profil.html" class="nav-item">
+            <i class="fas fa-user"></i> Profil
+        </a>
+    </nav>
+    
+    <div id="detailOverlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h3 id="overlayTitle">Detail Produk</h3>
+                <button class="close-btn" onclick="closeOverlay()">&times;</button>
+            </div>
+            
+            <div id="productHighlight" class="product-highlight-box">
+                </div>
+
+            <div id="overlayDetailsContainer">
+                </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===================================
+// UTILITY FUNCTIONS
+// ===================================
+function formatRupiah(number) {
+    if (typeof number !== 'number') return 'Rp 0';
+    return 'Rp ' + number.toLocaleString("id-ID", {minimumFractionDigits: 0});
+}
+
+// ===================================
+// OVERLAY FUNCTIONS
+// ===================================
+
+function closeOverlay() {
+    document.getElementById('detailOverlay').classList.remove('show');
+    document.getElementById('detailOverlay').style.display = 'none';
+    if (window.overlayInterval) {
+        clearInterval(window.overlayInterval); 
+    }
+}
+
+function openOverlay(prod) {
+    const overlay = document.getElementById('detailOverlay');
+    const container = document.getElementById('overlayDetailsContainer');
+    const highlightBox = document.getElementById('productHighlight');
+    
+    container.innerHTML = ''; 
+
+    // 1. Isi Kotak Highlight (Stable A)
+    highlightBox.innerHTML = `
+        <h4>${prod.name}</h4>
+        <p>ID: PROD-${prod.id || 'XXX'}</p>
+    `;
+
+    // 2. Hitung & Render Detail List
+    const durationDays = prod.duration || 30; 
+    const totalEstProfit = prod.daily * durationDays;
+
+    // Hitung timer awal
+    let lastProfit = new Date(prod.lastProfitDate);
+    let nextProfitTime = new Date(lastProfit.getTime() + 24 * 60 * 60 * 1000);
+    
+    const detailsHtmlTemplate = () => {
+        let now = new Date();
+        let diffMs = nextProfitTime - now;
+
+        if (diffMs < 0 || prod.status === "Selesai") {
+            diffMs = 0;
+        }
+        
+        const h = Math.floor(diffMs / (1000 * 60 * 60));
+        const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diffMs % (1000 * 60)) / 1000); 
+
+        const timerText = prod.status === "Aktif" 
+            ? `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+            : "Selesai";
+
+        return `
+            <div class="detail-item-overlay"><span class="label">Status Produk</span><span class="value">${prod.status}</span></div>
+            <div class="detail-item-overlay"><span class="label">Jumlah Investasi</span><span class="value">${formatRupiah(prod.price)}</span></div>
+            <div class="detail-item-overlay"><span class="label">Penghasilan Harian</span><span class="value highlight">${formatRupiah(prod.daily)}</span></div>
+            <div class="detail-item-overlay"><span class="label">Total Estimasi Profit</span><span class="value highlight">${formatRupiah(totalEstProfit)}</span></div>
+            <div class="detail-item-overlay"><span class="label">Siklus/Durasi</span><span class="value">${durationDays} Hari</span></div>
+            <div class="detail-item-overlay"><span class="label">Waktu Profit Masuk</span><span class="value timer" id="overlayCountdown">${timerText}</span></div>
+        `;
+    };
+    
+    container.innerHTML = detailsHtmlTemplate();
+
+    // Tampilkan overlay dengan animasi
+    overlay.style.display = 'flex';
+    setTimeout(() => overlay.classList.add('show'), 10);
+
+    // Hentikan dan mulai Timer Detik (jika aktif)
+    if (window.overlayInterval) {
+        clearInterval(window.overlayInterval);
+    }
+    
+    if (prod.status === "Aktif") {
+        window.overlayInterval = setInterval(() => {
+            // Update hanya elemen countdown, bukan seluruh container, untuk performa lebih baik
+            const countdownEl = document.getElementById('overlayCountdown');
+            if (countdownEl) {
+                let now = new Date();
+                let diffMs = nextProfitTime - now;
+                
+                if (diffMs < 0) {
+                    clearInterval(window.overlayInterval);
+                    countdownEl.textContent = "Selesai. Mohon Reload.";
+                    return;
+                }
+                const h = Math.floor(diffMs / (1000 * 60 * 60));
+                const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diffMs % (1000 * 60)) / 1000);
+                
+                countdownEl.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            } else {
+                 clearInterval(window.overlayInterval); // Jika elemen tidak ada, stop interval
+            }
+        }, 1000);
+    }
+
+    // Logic untuk menutup saat klik di luar area modal
+    document.querySelector('#detailOverlay').onclick = (e) => {
+        if (e.target.id === 'detailOverlay') closeOverlay();
+    };
+}
+
+
+// ===================================
+// MAIN LOGIC
+// ===================================
+document.addEventListener("DOMContentLoaded", () => {
+    const activeListContainer = document.getElementById('activeInvestmentList');
+    const completedListContainer = document.getElementById('completedInvestmentList');
+    
+    let activeUser = JSON.parse(localStorage.getItem("activeUser"));
+
+    // Simulasi data jika belum ada (Dipertahankan untuk demo)
+    if (!activeUser || !activeUser.currentInvestments) {
+        activeUser = { 
+            earning: 10000, 
+            currentInvestments: [
+                { id: '001A', name: 'Stable A', price: 500000, daily: 50000, duration: 10, total: 500000, startDate: new Date(Date.now() - (4 * 24 * 60 * 60 * 1000)).toISOString(), lastProfitDate: new Date(Date.now() - (23 * 60 * 60 * 1000)).toISOString(), status: 'Aktif' },
+                { id: '002B', name: 'Dynamic B', price: 100000, daily: 10000, duration: 5, total: 50000, startDate: new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)).toISOString(), lastProfitDate: new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)).toISOString(), status: 'Selesai' }
+            ]
+        };
+        localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    }
+
+
+    activeUser.earning = Number(activeUser.earning || 0);
+    const investments = activeUser.currentInvestments || [];
+    
+
+    function renderInvestments(){
+        // Bersihkan kontainer
+        activeListContainer.innerHTML = '';
+        completedListContainer.innerHTML = '';
+
+        const now = new Date();
+        let hasActive = false;
+        let hasCompleted = false;
+
+        investments.forEach((prod) => {
+            // --- Logika Update Profit & Status ---
+            const startDate = new Date(prod.startDate);
+            const endDate = new Date(startDate.getTime() + prod.duration * 24 * 60 * 60 * 1000);
+            
+            if (now >= endDate && prod.status === "Aktif") {
+                prod.status = "Selesai";
+                localStorage.setItem("activeUser", JSON.stringify(activeUser));
+            }
+            
+            let lastProfit = new Date(prod.lastProfitDate);
+            let nextProfitTime = new Date(lastProfit.getTime() + 24 * 60 * 60 * 1000);
+            let diffMs = nextProfitTime - now;
+
+            if(diffMs <= 0 && prod.status === "Aktif"){
+                activeUser.earning += prod.daily;
+                prod.lastProfitDate = now.toISOString();
+                localStorage.setItem("activeUser", JSON.stringify(activeUser));
+            }
+            // -------------------------------------
+
+            const statusClass = prod.status === "Aktif" ? "status-active-style" : "status-completed-style";
+            const renderClass = prod.status === "Aktif" ? "active-render" : "completed-render";
+
+            const card = document.createElement("div");
+            card.className = `investment-card ${renderClass}`;
+            card.onclick = () => openOverlay(prod);
+
+            card.innerHTML = `
+                <div class="plan-info-summary">
+                    <span class="plan-title">${prod.name}</span>
+                    <div class="plan-price-status">
+                        <span class="price">Beli: ${formatRupiah(prod.price)}</span>
+                        <span class="plan-status ${statusClass}">${prod.status}</span>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right view-details-icon"></i>
+            `;
+            
+            if(prod.status === "Aktif"){
+                activeListContainer.appendChild(card);
+                hasActive = true;
+            } else if (prod.status === "Selesai") {
+                completedListContainer.appendChild(card);
+                hasCompleted = true;
+            }
+        });
+        
+        // Tampilkan empty state jika tidak ada data
+        if (!hasActive) {
+            activeListContainer.innerHTML = `
+                <div class="empty-investment-card">
+                    <div class="empty-icon-sad"><i class="fas fa-dollar-sign"></i></div>
+                    <h4>Mulai Investasi Sekarang!</h4>
+                    <p>Anda belum memiliki produk investasi aktif. Raih peluang keuntungan harian!</p>
+                    <a href="beranda.html" class="btn-buy-product">Deposit & Beli Produk</a>
+                </div>
+            `;
+        }
+        if (!hasCompleted) {
+            completedListContainer.innerHTML = `
+                <div class="empty-investment-card">
+                    <div class="empty-icon-sad"><i class="fas fa-check-circle"></i></div>
+                    <h4>Tidak Ada Investasi Selesai</h4>
+                    <p>Produk yang telah berakhir akan muncul di sini.</p>
+                </div>
+            `;
+        }
+    }
+
+    // === TAB SWITCHING LOGIC ===
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    function switchTab(targetTab) {
+        tabButtons.forEach(btn => btn.classList.remove('active-tab'));
+        tabPanes.forEach(pane => pane.classList.remove('active-pane'));
+
+        document.querySelector(`.tab-button[data-tab="${targetTab}"]`).classList.add('active-tab');
+        document.getElementById(`tab-${targetTab}`).classList.add('active-pane');
+    }
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            switchTab(targetTab);
+        });
+    });
+
+    // Render data awal
+    renderInvestments();
+    switchTab('active'); 
+
+    // Cleanup interval saat pindah halaman
+    window.addEventListener('beforeunload', () => {
+        if (window.overlayInterval) {
+            clearInterval(window.overlayInterval);
+        }
+    });
+});
+</script>
+</body>
+</html>

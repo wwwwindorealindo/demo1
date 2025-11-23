@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tim dan Undangan - Indoreal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* Variabel CSS untuk tema HIJAU CERAH (Sama dengan Beranda) */
+        :root {
+            --primary-green: #28a745; /* Hijau Cerah/Standard (Seperti Beranda) */
+            --light-green: #e6f7eb;   /* Hijau Mint Pucat (Seperti Beranda) */
+            --dark-green: #1e7e34;    /* Hijau Gelap Standard (Seperti Beranda) */
+
+            --bg-light: #ffffff; 
+            --bg-page: #F7F7F7; 
+            --text-dark: #333333; 
+            --text-muted: #888; 
+            --border-color: #EFEFEF; 
+            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05); 
+            --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.15); 
+            --transition-speed: 0.2s;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* === GLOBAL LOADING OVERLAY === */
+        #globalLoadingOverlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 1; visibility: visible;
+            transition: opacity var(--transition-speed), visibility var(--transition-speed);
+        }
+
+        .spinner {
+            border: 4px solid rgba(40, 167, 69, 0.2); 
+            border-top: 4px solid var(--primary-green);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        #globalLoadingOverlay.hidden {
+            opacity: 0; visibility: hidden;
+        }
+        
+        /* === APP STRUCTURE === */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-page); 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            color: var(--text-dark); 
+        }
+        .app-container { 
+            width: 100%; 
+            max-width: 450px; 
+            margin: 0 auto; 
+            background-color: var(--bg-light); 
+            box-shadow: none; 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        .main-content { 
+            padding: 0 20px 110px 20px; 
+            flex-grow: 1; 
+        }
+
+        /* === HEADER & TOTAL KOMISI === */
+        .team-header {
+            background-color: var(--bg-light); 
+            color: var(--text-dark);
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color); 
+            margin-bottom: 0; 
+        }
+        .team-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .commission-total {
+            background-color: var(--light-green); 
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px; 
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            border: 1px solid var(--primary-green);
+        }
+        .commission-total p {
+            font-size: 13px; 
+            margin: 0 0 5px 0;
+            font-weight: 500;
+            color: var(--dark-green);
+        }
+        .commission-total h3 {
+            font-size: 20px;
+            margin: 0;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+        
+        /* === INVITE BOX === */
+        .invite-box {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-subtle);
+            margin-bottom: 20px; 
+            border: 1px solid var(--primary-green); 
+        }
+        .invite-box p {
+            font-weight: 600; 
+            font-size: 14px;
+            color: var(--primary-green);
+            margin: 0 0 10px 0;
+        }
+        .invite-link {
+            background-color: var(--bg-page); 
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+            color: var(--text-dark);
+            font-weight: 500;
+            border: 1px dashed var(--text-muted); 
+        }
+        .btn-copy {
+            width: 100%;
+            padding: 10px;
+            background: var(--dark-green); 
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-copy:hover {
+            background: var(--primary-green);
+        }
+        
+        /* === COMMISSION LEVELS === */
+        .section-title-team {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--primary-green); 
+            display: inline-block;
+        }
+
+        .commission-levels {
+            display: flex;
+            flex-direction: column; 
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .level-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px; 
+            border-radius: 10px; 
+            background-color: var(--light-green); 
+            border: 1px solid var(--primary-green); 
+            box-shadow: var(--shadow-subtle); 
+            transition: transform 0.2s;
+        }
+        .level-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .level-info {
+            display: flex;
+            align-items: center;
+        }
+        .level-icon {
+            font-size: 20px;
+            color: var(--primary-green);
+            margin-right: 15px;
+            width: 25px;
+            text-align: center;
+        }
+        .level-card h4 {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin: 0;
+            font-weight: 600;
+        }
+        .level-card span {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-green); 
+        }
+
+        /* *************************************** */
+        /* === MENU GRID ANGGOTA TIM (Disesuaikan) === */
+        /* *************************************** */
+        .team-tabs {
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin-bottom: 20px;
+        }
+        .team-tab-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60px; /* Tinggi dikurangi karena tidak ada 2 baris teks */
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: 500; 
+            border-radius: 10px; 
+            box-shadow: var(--shadow-subtle);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .team-tab-btn:hover:not(.active) {
+             background-color: var(--bg-page);
+        }
+        .team-tab-btn.active {
+            background-color: var(--primary-green); 
+            color: white;
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); 
+        }
+        
+        /* Gaya untuk Detail di dalam Kartu Tab */
+        /* Menghilangkan .tab-count dan memperbesar .tab-label */
+        .tab-label {
+            font-size: 14px; /* Ukuran label diperbesar */
+            font-weight: 600; /* Ditebalkan */
+            color: var(--dark-green); /* Warna teks default */
+            transition: color 0.2s;
+            margin: 0; /* Pastikan tidak ada margin */
+        }
+        .team-tab-btn.active .tab-label {
+            color: var(--bg-light); /* Warna teks aktif */
+        }
+
+        /* Konten Anggota Tim */
+        .team-content-area {
+            background-color: var(--bg-light);
+            min-height: 200px;
+            padding: 0; 
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-subtle);
+            overflow: hidden; 
+        }
+        .no-member-container {
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .no-member-text {
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        /* ⬇️ === NAVIGASI BAWAH (KONSISTEN) === ⬇️ */
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 20px; 
+            width: calc(100% - 40px); 
+            max-width: 410px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            height: 65px; 
+            padding: 5px 10px;
+            box-sizing: border-box;
+
+            background-color: var(--light-green); 
+            border: 1px solid var(--primary-green);
+            border-radius: 10px; 
+            box-shadow: var(--shadow-float); 
+            z-index: 100;
+        }
+
+        .nav-item { 
+            display: flex; flex-direction: column; align-items: center; 
+            text-decoration: none; 
+            color: #555; 
+            font-size: 10px; 
+            font-weight: 500; 
+            padding: 5px; 
+            transition: color 0.2s; 
+        }
+        .nav-item i { 
+            font-size: 22px; 
+            font-weight: 700; 
+            margin-bottom: 3px; 
+        }
+        .nav-item.active-team { 
+            color: var(--primary-green); 
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="globalLoadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-container">
+        
+        <header class="team-header">
+            <h2>Tim dan Undangan</h2>
+        </header>
+
+        <div class="main-content">
+            
+            <div class="commission-total">
+                <p>Total Komisi</p>
+                <h3>Rp 0</h3>
+            </div>
+            
+            <div class="invite-box">
+                <p>Link Undangan Saya</p>
+                <div class="invite-link">
+                    https://indoreal-starting.web.id/index.html
+                </div>
+                <button class="btn-copy">
+                    <i class="fas fa-copy"></i> Salin
+                </button>
+            </div>
+            
+            <h3 class="section-title-team">Tingkat Komisi</h3>
+            <div class="commission-levels">
+                <div class="level-card">
+                    <div class="level-info">
+                        <i class="fas fa-medal level-icon"></i> 
+                        <h4>Komisi Level 1</h4>
+                    </div>
+                    <span>25%</span>
+                </div>
+                <div class="level-card">
+                    <div class="level-info">
+                        <i class="fas fa-star level-icon"></i> 
+                        <h4>Komisi Level 2</h4>
+                    </div>
+                    <span>3%</span>
+                </div>
+                <div class="level-card">
+                    <div class="level-info">
+                        <i class="fas fa-hands-helping level-icon"></i> 
+                        <h4>Komisi Level 3</h4>
+                    </div>
+                    <span>2%</span>
+                </div>
+            </div>
+
+            <h3 class="section-title-team">Anggota Tim</h3>
+            
+            <div class="team-tabs">
+                <button class="team-tab-btn active" data-level="1">
+                    <span class="tab-label">Level 1</span>
+                </button>
+                <button class="team-tab-btn" data-level="2">
+                    <span class="tab-label">Level 2</span>
+                </button>
+                <button class="team-tab-btn" data-level="3">
+                    <span class="tab-label">Level 3</span>
+                </button>
+            </div>
+
+            <div class="team-content-area" id="team-content">
+                <div class="no-member-container">
+                    <i class="fas fa-users-slash" style="font-size: 30px; color: var(--text-muted);"></i>
+                    <p class="no-member-text">Tidak ditemukan anggota di level 1</p>
+                </div>
+            </div>
+
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="beranda.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                Beranda
+            </a>
+            <a href="investasiku.html" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                Invest
+            </a>
+            <a href="tim.html" class="nav-item active-team"> 
+                <i class="fas fa-users"></i>
+                Tim
+            </a>
+            <a href="profil.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                Profil
+            </a>
+        </nav>
+    </div>
+    
+    <script>
+// Data dummy, kali ini hanya untuk jumlah anggota (count: 0)
+const DUMMY_TEAM_COUNT = {
+    '1': 0, 
+    '2': 0, 
+    '3': 0  
+};
+
+// Data dummy untuk konten anggota (list kosong)
+const DUMMY_TEAM_DATA = {
+    '1': [],
+    '2': [],
+    '3': []
+};
+
+function renderTeamList(level) {
+    const teamContent = document.getElementById('team-content');
+    const members = DUMMY_TEAM_DATA[level];
+
+    // Menampilkan pesan kosong
+    if (!members || members.length === 0) {
+        teamContent.innerHTML = `
+            <div class="no-member-container">
+                <i class="fas fa-users-slash" style="font-size: 30px; color: var(--text-muted);"></i>
+                <p class="no-member-text">Tidak ditemukan anggota di level ${level}</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Jika ada anggota, gunakan list kosong sebagai placeholder
+    teamContent.innerHTML = `
+        <div class="no-member-container">
+            <p class="no-member-text">Area daftar anggota Level ${level} (Saat ini dikosongkan)</p>
+        </div>
+    `;
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide loading overlay
+    const loadingOverlay = document.getElementById('globalLoadingOverlay');
+    if (loadingOverlay) {
+        setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+    }
+
+    const tabs = document.querySelectorAll('.team-tab-btn');
+    const copyButton = document.querySelector('.btn-copy');
+    const inviteLinkElement = document.querySelector('.invite-link');
+
+    // Catatan: Bagian ini tetap ada, tapi tidak lagi menampilkan angka di tombol grid
+    // document.getElementById('count-level-1').textContent = DUMMY_TEAM_COUNT['1'];
+    // document.getElementById('count-level-2').textContent = DUMMY_TEAM_COUNT['2'];
+    // document.getElementById('count-level-3').textContent = DUMMY_TEAM_COUNT['3'];
+
+
+    // Ambil user aktif dari localStorage dan update link
+    const activeUser = JSON.parse(localStorage.getItem('activeUser'));
+    if(activeUser && activeUser.id){
+        const userId = activeUser.id;
+        inviteLinkElement.textContent = `https://indoreal-starting.web.id/index.html?refferal-id=${userId}`;
+    }
+
+    // Fungsi tab anggota tim
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            const level = this.getAttribute('data-level').trim();
+            renderTeamList(level);
+        });
+    });
+
+    // Fungsi tombol salin (warna disesuaikan agar konsisten dengan tema cerah)
+    copyButton.addEventListener('click', function() {
+        const link = inviteLinkElement.textContent.trim();
+        navigator.clipboard.writeText(link)
+            .then(() => {
+                copyButton.innerHTML = '<i class="fas fa-check"></i> Disalin!';
+                copyButton.style.backgroundColor = '#6c757d'; 
+
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i> Salin';
+                    copyButton.style.backgroundColor = 'var(--dark-green)'; 
+                }, 2000);
+            })
+            .catch(err => {
+                alert('Gagal menyalin link: ' + err);
+            });
+    });
+    
+    // Inisialisasi tampilan pertama kali (Level 1)
+    renderTeamList('1');
+});
+</script>
+</body>
+</html>
